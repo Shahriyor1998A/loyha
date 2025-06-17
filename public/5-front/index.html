@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Uylar Katalogi</title>
+  <link rel="stylesheet" href="./css/manu.css" />
+  <style>
+    .form-container {
+      margin: 20px 0;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    .house-card {
+      position: relative;
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+    .delete-btn {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      background-color: red;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🏡 Uylar Katalogi</h1>
+  </div>
+  
+  <div class="container">
+    <div class="form-container">
+      <h3>Yangi uy qo'shish</h3>
+      <form id="add-house-form">
+        <input type="text" id="title" placeholder="Sarlavha" required /><br/><br/>
+        <input type="text" id="price" placeholder="Narx" required /><br/><br/>
+        <input type="text" id="address" placeholder="Manzil" required /><br/><br/>
+        <input type="file" id="image" accept="image/*" required /><br/><br/>
+        <button type="submit">Qo'shish</button>
+      </form>
+    </div>
+
+    <div id="loader" class="loader"></div>
+    <div id="homes-list" class="homes-list"></div>
+  </div>
+
+  <script>
+    async function loadHouses() {
+      const loader = document.getElementById('loader');
+      loader.style.display = 'block';
+
+      try {
+        const response = await fetch('http://localhost:3000/api/v1/houses');
+        const houses = await response.json();
+
+        const listContainer = document.getElementById('homes-list');
+        listContainer.innerHTML = '';
+
+        houses.forEach(house => {
+          const houseCard = document.createElement('div');
+          houseCard.className = 'house-card fade-in';
+
+          houseCard.innerHTML = `
+            <h2>${house.title || 'Nomsiz Uy'}</h2>
+            <p><strong>Narxi:</strong> ${house.price || 'Nomaʼlum'} $</p>
+            <p><strong>Manzil:</strong> ${house.address || 'Koʼrsatilmagan'}</p>
+            ${
+              house.images && house.images.length > 0
+                ? `<img src="http://localhost:3000/uploads/${house.images[0]}" alt="House Image" width="200"/>`
+                : `<div class="no-image">Rasm yo'q</div>`
+            }
+            <button class="delete-btn" data-id="${house.id}">O'chirish</button>
+          `;
+          listContainer.appendChild(houseCard);
+        });
+
+        document.querySelectorAll('.delete-btn').forEach(button => {
+          button.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            const id = button.getAttribute('data-id');
+            if (confirm("Haqiqatan ham o'chirmoqchimisiz?")) {
+              await deleteHouse(id);
+            }
+          });
+        });
+
+      } catch (error) {
+        console.error('Xatolik:', error);
+      } finally {
+        loader.style.display = 'none';
+      }
+    }
+
+    document.getElementById('add-house-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const title = document.getElementById('title').value;
+      const price = document.getElementById('price').value;
+      const address = document.getElementById('address').value;
+      const image = document.getElementById('image').files[0];
+
+      const formData = new FormData();
+      formData.append('title', title);
+      formData.append('price', price);
+      formData.append('address', address);
+      formData.append('image', image);
+
+      try {
+        const response = await fetch('http://localhost:3000/api/v1/houses', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (!response.ok) throw new Error('Qo\'shishda xatolik!');
+
+        alert("Uy muvaffaqiyatli qo'shildi!");
+        e.target.reset();
+        await loadHouses();
+      } catch (err) {
+        console.error(err);
+        alert("Xatolik yuz berdi.");
+      }
+    });
+
+    async function deleteHouse(id) {
+      try {
+        const response = await fetch(`http://localhost:3000/api/v1/houses/${id}`, {
+          method: 'DELETE'
+        });
+
+        if (!response.ok) throw new Error("O'chirishda xatolik!");
+
+        alert("Uy muvaffaqiyatli o'chirildi.");
+        await loadHouses();
+      } catch (err) {
+        console.error(err);
+        alert("Xatolik yuz berdi.");
+      }
+    }
+
+    window.onload = loadHouses;
+  </script>
+</body>
+</html>
+
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Uylar Katalogi</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="header">
+    <h1>🏡 Uylar Katalogi</h1>
+  </div>
+
+  <div class="container">
+    <h2>Yangi uy qo'shish</h2>
+    <form id="add-house-form">
+      <input type="text" id="title" placeholder="Sarlavha" required />
+      <input type="text" id="price" placeholder="Narx" required />
+      <input type="text" id="address" placeholder="Manzil" required />
+      <input type="file" id="image" accept="image/*" required />
+      <button type="submit">Qo'shish</button>
+    </form>
+
+    <h2>Mavjud Uylar</h2>
+    <div id="homes-list"></div>
+  </div>
+
+  <script>
+    async function loadHouses() {
+      try {
+        const response = await fetch('http://localhost:3000/api/v1/houses');
+        const houses = await response.json();
+        const listContainer = document.getElementById('homes-list');
+        listContainer.innerHTML = '';
+
+        houses.forEach(house => {
+          const houseCard = document.createElement('div');
+          houseCard.className = 'house-card';
+          houseCard.innerHTML = `
+            <h3>${house.title}</h3>
+            <p><b>Narxi:</b> ${house.price} $</p>
+            <p><b>Manzil:</b> ${house.address}</p>
+            ${house.images && house.images.length > 0 ? 
+              `<img src="http://localhost:3000/uploads/${house.images[0]}" alt="House Image">` :
+              `<p>Rasm mavjud emas</p>`}
+            <div class="actions">
+              <button class="edit-btn" onclick="editHouse('${house.id}')">Tahrirlash</button>
+              <button class="delete-btn" onclick="deleteHouse('${house.id}')">O'chirish</button>
+            </div>
+          `;
+          listContainer.appendChild(houseCard);
+        });
+
+      } catch (err) {
+        console.error('Xatolik:', err);
+      }
+    }
+
+    document.getElementById('add-house-form').addEventListener('submit', async e => {
+      e.preventDefault();
+
+      const formData = new FormData();
+      formData.append('title', document.getElementById('title').value);
+      formData.append('price', document.getElementById('price').value);
+      formData.append('address', document.getElementById('address').value);
+      formData.append('image', document.getElementById('image').files[0]);
+
+      try {
+        const res = await fetch('http://localhost:3000/api/v1/houses', {
+          method: 'POST',
+          body: formData
+        });
+        if (!res.ok) throw new Error('Qo\'shishda xatolik');
+        alert("Muvaffaqiyatli qo'shildi!");
+        e.target.reset();
+        loadHouses();
+      } catch (err) {
+        console.error(err);
+        alert("Xatolik yuz berdi.");
+      }
+    });
+
+    async function deleteHouse(id) {
+      if (!confirm("Haqiqatan ham o'chirmoqchimisiz?")) return;
+
+      try {
+        const res = await fetch(`http://localhost:3000/api/v1/houses/${id}`, { method: 'DELETE' });
+        if (!res.ok) throw new Error('O\'chirishda xatolik');
+        alert("O'chirildi.");
+        loadHouses();
+      } catch (err) {
+        console.error(err);
+        alert("Xatolik yuz berdi.");
+      }
+    }
+
+    function editHouse(id) {
+      window.location.href = `edit.html?id=${id}`;
+    }
+
+    window.onload = loadHouses;
+  </script>
+
+</body>
+</html> -->

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Uy Tahrirlash</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="header">
+    <h1>🏡 Uy ma'lumotlarini tahrirlash</h1>
+  </div>
+
+  <div class="container">
+    <form id="edit-house-form">
+      <input type="text" id="title" placeholder="Sarlavha" required />
+      <input type="text" id="price" placeholder="Narx" required />
+      <input type="text" id="address" placeholder="Manzil" required />
+      <input type="file" id="image" accept="image/*" />
+      <button type="submit">Yangilash</button>
+    </form>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const houseId = params.get('id');
+
+    async function loadHouse() {
+      try {
+        const res = await fetch(`http://localhost:3000/api/v1/houses/${houseId}`);
+        const house = await res.json();
+
+        document.getElementById('title').value = house.title || '';
+        document.getElementById('price').value = house.price || '';
+        document.getElementById('address').value = house.address || '';
+      } catch (err) {
+        console.error(err);
+        alert("Uy topilmadi");
+      }
+    }
+
+    document.getElementById('edit-house-form').addEventListener('submit', async e => {
+      e.preventDefault();
+
+      const formData = new FormData();
+      formData.append('title', document.getElementById('title').value);
+      formData.append('price', document.getElementById('price').value);
+      formData.append('address', document.getElementById('address').value);
+      const image = document.getElementById('image').files[0];
+      if (image) formData.append('image', image);
+
+      try {
+        const res = await fetch(`http://localhost:3000/api/v1/houses/${houseId}`, {
+          method: 'PATCH',
+          body: formData
+        });
+        if (!res.ok) throw new Error('Yangilashda xatolik');
+        alert("Muvaffaqiyatli yangilandi!");
+        window.location.href = 'index.html';
+      } catch (err) {
+        console.error(err);
+        alert("Xatolik yuz berdi.");
+      }
+    });
+
+    loadHouse();
+  </script>
+
+</body>
+</html>

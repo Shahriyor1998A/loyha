@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="./css/login.css">
+  <title>Animations</title>
+</head>
+<body>
+
+  <div class="login-box">
+    <h2>Login</h2>
+    <form action="" class="form">
+      <div class="user-box">
+        <input class="input" type="text" id="" required="">
+        <label class="label" for="">Username</label>
+      </div>
+      <!-- /.user-box -->
+      <div class="user-box">
+        <input class="input" type="password" id="" required="">
+        <label class="label" for="">Password</label>
+      </div>
+      <!-- /.user-box -->
+      <a href="#">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        Submit
+      </a>
+    </form>
+    <!-- /form -->
+     <div class="login-link">
+      Already have an account? <a href="register.html">sig in</a>
+    </div>
+  </div>
+  <script>
+    const form = document.querySelector("form")
+
+
+    form.addEventListener("click",(e) => {
+      e.preventDefault()
+    })
+  </script>
+  
+</body>
+</html>

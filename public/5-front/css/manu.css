@@ -1,0 +1,108 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #74ebd5, #acb6e5);
+  margin: 0;
+  padding: 0;
+}
+
+.header {
+  text-align: center;
+  padding: 30px;
+  color: white;
+  text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+  font-size: 2.5rem;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.homes-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 30px;
+  margin-top: 20px;
+}
+
+.house-card {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 15px;
+  padding: 20px;
+  color: #fff;
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  overflow: hidden;
+  position: relative;
+}
+
+.house-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 16px 40px rgba(31, 38, 135, 0.5);
+}
+
+.house-card h2 {
+  margin-top: 0;
+  font-size: 1.5rem;
+}
+
+.house-card p {
+  margin: 10px 0;
+  font-size: 1rem;
+}
+
+.house-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-top: 15px;
+  transition: transform 0.4s ease;
+}
+
+.house-card img:hover {
+  transform: scale(1.05);
+}
+
+.no-image {
+  width: 100%;
+  height: 200px;
+  background: rgba(255,255,255,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  color: #ddd;
+  font-size: 1.2rem;
+}
+
+.loader {
+  border: 10px solid #f3f3f3;
+  border-top: 10px solid #3498db;
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  animation: spin 1.5s linear infinite;
+  margin: 100px auto;
+  display: none;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.fade-in {
+  animation: fadeInAnimation 0.8s ease forwards;
+  opacity: 0;
+}
+
+@keyframes fadeInAnimation {
+  to { opacity: 1; }
+}
